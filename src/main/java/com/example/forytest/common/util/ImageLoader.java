@@ -1,4 +1,4 @@
-﻿package com.example.forytest.common.util;
+package com.example.forytest.common.util;
 
 import java.io.IOException;
 import java.nio.file.Files;

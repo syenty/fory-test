@@ -1,4 +1,4 @@
-﻿package com.example.forytest.step2.server.controller;
+package com.example.forytest.step2.server.controller;
 
 import com.example.forytest.step2.server.service.ImageService;
 import org.springframework.http.ResponseEntity;

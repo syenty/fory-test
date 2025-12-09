@@ -1,4 +1,4 @@
-﻿package com.example.forytest.step1.bench;
+package com.example.forytest.step1.bench;
 
 import com.example.forytest.common.model.ImagePayload;
 import com.example.forytest.common.serializer.ForySerializer;

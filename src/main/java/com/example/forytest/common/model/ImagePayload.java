@@ -1,4 +1,4 @@
-﻿package com.example.forytest.common.model;
+package com.example.forytest.common.model;
 
 public class ImagePayload {
     private final String name;

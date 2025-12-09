@@ -1,4 +1,4 @@
-﻿package com.example.forytest.step2.client;
+package com.example.forytest.step2.client;
 
 import com.example.forytest.common.model.ImagePayload;
 import com.example.forytest.common.serializer.ForySerializer;
@@ -15,9 +15,9 @@ public class BenchmarkClient {
 
     public static void main(String[] args) {
         RestTemplate restTemplate = new RestTemplate();
-        String imagePath = Paths.get("src", "main", "resources", "images", "big_sample.jpg").toString();
+        String imagePath = Paths.get("src", "main", "resources", "images", "big_size_image.jpg").toString();
         byte[] data = ImageLoader.load(imagePath);
-        ImagePayload payload = new ImagePayload("big_sample.jpg", data);
+        ImagePayload payload = new ImagePayload("big_size_image.jpg", data);
 
         JsonSerializer jsonSerializer = new JsonSerializer();
         ForySerializer forySerializer = new ForySerializer();

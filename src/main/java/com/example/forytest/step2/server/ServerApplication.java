@@ -1,4 +1,4 @@
-﻿package com.example.forytest.step2.server;
+package com.example.forytest.step2.server;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

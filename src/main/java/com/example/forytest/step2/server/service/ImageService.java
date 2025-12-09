@@ -1,4 +1,4 @@
-﻿package com.example.forytest.step2.server.service;
+package com.example.forytest.step2.server.service;
 
 import com.example.forytest.common.model.ImagePayload;
 import com.example.forytest.common.serializer.ForySerializer;

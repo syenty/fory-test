@@ -1,4 +1,4 @@
-﻿package com.example.forytest.common.serializer;
+package com.example.forytest.common.serializer;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
