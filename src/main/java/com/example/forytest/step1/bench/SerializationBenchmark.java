@@ -7,7 +7,7 @@ import com.example.forytest.common.util.ImageLoader;
 import java.nio.file.Paths;
 
 public class SerializationBenchmark {
-    private static final int ITERATIONS = 10;
+    private static final int ITERATIONS = 100;
 
     public static void main(String[] args) {
         String imagePath = Paths.get("src", "main", "resources", "images", "big_size_image.jpg").toString();
