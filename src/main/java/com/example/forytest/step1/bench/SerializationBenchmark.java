@@ -10,9 +10,9 @@ public class SerializationBenchmark {
     private static final int ITERATIONS = 1000;
 
     public static void main(String[] args) {
-        String imagePath = Paths.get("src", "main", "resources", "images", "big_sample.jpg").toString();
+        String imagePath = Paths.get("src", "main", "resources", "images", "big_size_image.jpg").toString();
         byte[] imageBytes = ImageLoader.load(imagePath);
-        ImagePayload payload = new ImagePayload("big_sample.jpg", imageBytes);
+        ImagePayload payload = new ImagePayload("big_size_image.jpg", imageBytes);
 
         JsonSerializer jsonSerializer = new JsonSerializer();
         ForySerializer forySerializer = new ForySerializer();

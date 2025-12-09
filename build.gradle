@@ -21,6 +21,8 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'com.fasterxml.jackson.core:jackson-databind'
 
+    implementation 'org.apache.fory:fory-core:0.13.2'
+
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
 }
 

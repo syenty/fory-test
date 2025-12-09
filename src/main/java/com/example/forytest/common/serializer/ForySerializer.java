@@ -1,26 +1,30 @@
 ﻿package com.example.forytest.common.serializer;
 
 import com.example.forytest.common.model.ImagePayload;
-import java.util.Base64;
+import org.apache.fory.BaseFory;
+import org.apache.fory.Fory;
+import org.apache.fory.config.Language;
 
 /**
- * Fory 래퍼 자리에 임시 구현을 둡니다. 실제 Fory 라이브러리를 연결하면 이 부분을 교체하세요.
+ * Apache Fory 직렬화 래퍼. 인스턴스는 재사용하는 것이 권장된다.
  */
 public class ForySerializer {
+    private final BaseFory fory;
+
+    public ForySerializer() {
+        this.fory = Fory.builder()
+                .withLanguage(Language.JAVA)
+                .requireClassRegistration(true)
+                // 스레드 세이프가 필요하면 buildThreadSafeFory 사용
+                .build();
+        this.fory.register(ImagePayload.class);
+    }
+
     public byte[] serialize(ImagePayload payload) {
-        // 임시: 이름과 데이터를 단순 Base64로 묶어 직렬화
-        String encoded = payload.getName() + ":" + Base64.getEncoder().encodeToString(payload.getData());
-        return encoded.getBytes();
+        return fory.serialize(payload);
     }
 
     public ImagePayload deserialize(byte[] bytes) {
-        String raw = new String(bytes);
-        int separator = raw.indexOf(":");
-        if (separator < 0) {
-            throw new IllegalStateException("Invalid Fory payload");
-        }
-        String name = raw.substring(0, separator);
-        byte[] data = Base64.getDecoder().decode(raw.substring(separator + 1));
-        return new ImagePayload(name, data);
+        return (ImagePayload) fory.deserialize(bytes);
     }
 }
