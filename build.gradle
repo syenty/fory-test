@@ -32,3 +32,8 @@ tasks.register('runSerializationBenchmark', JavaExec) {
     mainClass = 'com.example.forytest.step1.bench.SerializationBenchmark'
     classpath = sourceSets.main.runtimeClasspath
 }
+
+tasks.register('runE2EBenchmark', JavaExec) {
+    mainClass = 'com.example.forytest.step2.client.BenchmarkClient'
+    classpath = sourceSets.main.runtimeClasspath
+}
