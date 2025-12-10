@@ -21,11 +21,16 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'com.fasterxml.jackson.core:jackson-databind'
     implementation 'org.apache.fory:fory-core:0.13.2'
+    implementation 'org.apache.httpcomponents.client5:httpclient5'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
 }
 
 tasks.named('test') {
     useJUnitPlatform()
+}
+
+tasks.named('bootRun') {
+    mainClass = 'com.example.forytest.step2.server.ServerApplication'
 }
 
 tasks.register('runSerializationBenchmark', JavaExec) {
@@ -35,5 +40,10 @@ tasks.register('runSerializationBenchmark', JavaExec) {
 
 tasks.register('runE2EBenchmark', JavaExec) {
     mainClass = 'com.example.forytest.step2.client.BenchmarkClient'
+    classpath = sourceSets.main.runtimeClasspath
+}
+
+tasks.register('runE2EBenchmarkWithConnectionPool', JavaExec) {
+    mainClass = 'com.example.forytest.step3.client.BenchmarkClient'
     classpath = sourceSets.main.runtimeClasspath
 }
