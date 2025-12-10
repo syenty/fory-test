@@ -1,12 +1,17 @@
-package com.example.forytest.step2.client;
+package com.example.forytest.step5.client;
 
 import com.example.forytest.common.model.ImagePayload;
 import com.example.forytest.common.serializer.ForySerializer;
 import com.example.forytest.common.serializer.JsonSerializer;
 import com.example.forytest.common.util.ImageLoader;
+import com.example.forytest.step3.client.PooledRestTemplateFactory;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -16,17 +21,18 @@ public class BenchmarkClient {
     private static final String BASE = "http://localhost:8080/api";
     private static final int WARMUP_COUNT = 3;
     private static final int RUN_COUNT = 500;
+    private static final int THREADS = 8;
 
     public static void main(String[] args) {
-        RestTemplate restTemplate = new RestTemplate();
+        RestTemplate restTemplate = PooledRestTemplateFactory.create();
         String imagePath = Paths.get("src", "main", "resources", "images", "big_size_image.jpg").toString();
         byte[] data = ImageLoader.load(imagePath);
         ImagePayload payload = new ImagePayload("big_size_image.jpg", data);
 
         JsonSerializer jsonSerializer = new JsonSerializer();
         ForySerializer forySerializer = new ForySerializer();
-        List<Double> jsonTimes = new ArrayList<>();
-        List<Double> foryTimes = new ArrayList<>();
+        List<Double> jsonTimes = Collections.synchronizedList(new ArrayList<>());
+        List<Double> foryTimes = Collections.synchronizedList(new ArrayList<>());
 
         System.out.printf("Warmup start (%d rounds)%n", WARMUP_COUNT);
         for (int i = 1; i <= WARMUP_COUNT; i++) {
@@ -36,22 +42,32 @@ public class BenchmarkClient {
                     forySerializer.serialize(payload), MediaType.APPLICATION_OCTET_STREAM_VALUE, true);
         }
 
-        System.out.printf("Benchmark start (%d rounds)%n", RUN_COUNT);
+        System.out.printf("Benchmark start (%d rounds, %d threads)%n", RUN_COUNT, THREADS);
+        ExecutorService executor = Executors.newFixedThreadPool(THREADS);
+        CountDownLatch latch = new CountDownLatch(RUN_COUNT * 2);
         long totalStart = System.nanoTime();
         for (int i = 1; i <= RUN_COUNT; i++) {
-            double jsonMs = logCall(restTemplate, i, "/json", "json",
-                    jsonSerializer.serialize(payload), MediaType.APPLICATION_JSON_VALUE, false);
-            jsonTimes.add(jsonMs);
-
-            double foryMs = logCall(restTemplate, i, "/fory", "fory",
-                    forySerializer.serialize(payload), MediaType.APPLICATION_OCTET_STREAM_VALUE, false);
-            foryTimes.add(foryMs);
+            final int iteration = i;
+            executor.submit(() -> {
+                double jsonMs = logCall(restTemplate, iteration, "/json", "json",
+                        jsonSerializer.serialize(payload), MediaType.APPLICATION_JSON_VALUE, false);
+                jsonTimes.add(jsonMs);
+                latch.countDown();
+            });
+            executor.submit(() -> {
+                double foryMs = logCall(restTemplate, iteration, "/fory", "fory",
+                        forySerializer.serialize(payload), MediaType.APPLICATION_OCTET_STREAM_VALUE, false);
+                foryTimes.add(foryMs);
+                latch.countDown();
+            });
         }
+        awaitLatch(latch);
         long totalElapsedMs = (System.nanoTime() - totalStart) / 1_000_000;
+        executor.shutdown();
 
         printStats("json", jsonTimes);
         printStats("fory", foryTimes);
-        System.out.printf("[summary][total] rounds=%d time=%d ms%n", RUN_COUNT, totalElapsedMs);
+        System.out.printf("[summary][total] rounds=%d threads=%d time=%d ms%n", RUN_COUNT, THREADS, totalElapsedMs);
     }
 
     private static double logCall(
@@ -74,6 +90,15 @@ public class BenchmarkClient {
         System.out.printf("[%s %d][%s] response=%s time=%.3f ms%n",
                 phase, iteration, label, response, elapsedMs);
         return elapsedMs;
+    }
+
+    private static void awaitLatch(CountDownLatch latch) {
+        try {
+            latch.await();
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            throw new IllegalStateException("Benchmark interrupted", e);
+        }
     }
 
     private static void printStats(String label, List<Double> times) {

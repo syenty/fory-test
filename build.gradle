@@ -43,7 +43,17 @@ tasks.register('runE2EBenchmark', JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
 }
 
-tasks.register('runE2EBenchmarkWithConnectionPool', JavaExec) {
+tasks.register('runE2EBenchmarkWithCP', JavaExec) {
     mainClass = 'com.example.forytest.step3.client.BenchmarkClient'
+    classpath = sourceSets.main.runtimeClasspath
+}
+
+tasks.register('runE2EBenchmarkWithMT', JavaExec) {
+    mainClass = 'com.example.forytest.step4.client.BenchmarkClient'
+    classpath = sourceSets.main.runtimeClasspath
+}
+
+tasks.register('runE2EBenchmarkWithMTAndCP', JavaExec) {
+    mainClass = 'com.example.forytest.step5.client.BenchmarkClient'
     classpath = sourceSets.main.runtimeClasspath
 }

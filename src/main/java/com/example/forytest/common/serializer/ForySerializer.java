@@ -15,8 +15,7 @@ public class ForySerializer {
         this.fory = Fory.builder()
                 .withLanguage(Language.JAVA)
                 .requireClassRegistration(true)
-                // ??? ???? ???? buildThreadSafeFory ??
-                .build();
+                .buildThreadSafeFory();
         this.fory.register(ImagePayload.class);
     }
 

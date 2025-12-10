@@ -15,7 +15,7 @@ import org.springframework.web.client.RestTemplate;
 public class BenchmarkClient {
     private static final String BASE = "http://localhost:8080/api";
     private static final int WARMUP_COUNT = 3;
-    private static final int RUN_COUNT = 50;
+    private static final int RUN_COUNT = 500;
 
     public static void main(String[] args) {
         RestTemplate restTemplate = PooledRestTemplateFactory.create();
@@ -37,6 +37,7 @@ public class BenchmarkClient {
         }
 
         System.out.printf("Benchmark start (%d rounds)%n", RUN_COUNT);
+        long totalStart = System.nanoTime();
         for (int i = 1; i <= RUN_COUNT; i++) {
             double jsonMs = logCall(restTemplate, i, "/json", "json",
                     jsonSerializer.serialize(payload), MediaType.APPLICATION_JSON_VALUE, false);
@@ -46,9 +47,11 @@ public class BenchmarkClient {
                     forySerializer.serialize(payload), MediaType.APPLICATION_OCTET_STREAM_VALUE, false);
             foryTimes.add(foryMs);
         }
+        long totalElapsedMs = (System.nanoTime() - totalStart) / 1_000_000;
 
         printStats("json", jsonTimes);
         printStats("fory", foryTimes);
+        System.out.printf("[summary][total] rounds=%d time=%d ms%n", RUN_COUNT, totalElapsedMs);
     }
 
     private static double logCall(
