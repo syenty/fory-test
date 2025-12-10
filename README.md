@@ -40,20 +40,20 @@ Apache Fory(Java)와 Jackson(JSON)의 직렬화/역직렬화 성능을 비교하
 ### 스텝3 (HTTP 엔드투엔드, 단일 스레드 + 커넥션 풀)
 
 - 서버: 스텝2 서버 재사용 (`./gradlew bootRun`).
-- 클라이언트: `./gradlew runE2EBenchmarkWithConnectionPool` (또는 `step3.client.BenchmarkClient` main)
+- 클라이언트: `./gradlew runE2EBenchmarkWithCP` (또는 `step3.client.BenchmarkClient` main)
 - 워밍업 3회 후 본 측정 500회. per-request 시간(ms) 로그 + mean/stddev/max + 전체 소요 시간 출력.
 - 클라이언트 `RestTemplate`에 HttpClient5 커넥션 풀 적용: maxTotal 50, route당 20.
 
 ### 스텝4 (HTTP 엔드투엔드, 멀티스레드)
 
 - 서버: 스텝2 서버 재사용 (`./gradlew bootRun`).
-- 클라이언트: `./gradlew runE2EBenchmarkStep4` (또는 `step4.client.BenchmarkClient` main)
+- 클라이언트: `./gradlew runE2EBenchmarkWithMT` (또는 `step4.client.BenchmarkClient` main)
 - 워밍업 3회 후 본 측정 500회, 스레드 8개 기본. per-request 시간 로그 + mean/stddev/max + 전체 소요 시간 출력.
 
 ### 스텝5 (HTTP 엔드투엔드, 멀티스레드 + 커넥션 풀)
 
 - 서버: 스텝2 서버 재사용 (`./gradlew bootRun`).
-- 클라이언트: `./gradlew runE2EBenchmarkStep5` (또는 `step5.client.BenchmarkClient` main)
+- 클라이언트: `./gradlew runE2EBenchmarkWithMTAndCP` (또는 `step5.client.BenchmarkClient` main)
 - 스텝4와 동일한 멀티스레드 설정/측정 방식 + 커넥션 풀 적용. per-request 로그 + mean/stddev/max + 전체 소요 시간 출력.
 
 ## 최근 벤치마크 예시 (스텝1, 100회 반복)
